@@ -7,7 +7,7 @@ from PyQt5.QtGui import QPixmap
 URL = "http://static-maps.yandex.ru/1.x"
 
 class Example(QWidget):
-    def init(self):
+    def __init__(self):
         super().init()
         self.initUI()
 
