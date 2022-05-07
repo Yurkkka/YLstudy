@@ -10,7 +10,7 @@ URL = "http://static-maps.yandex.ru/1.x"
 
 class Example(QWidget):
     def __init__(self):
-        super().init()
+        super().__init__()
         self.initUI()
         self.scale = 0
         self.longitude = 0
@@ -57,47 +57,50 @@ class Example(QWidget):
             "l": "map",
             "size": "400,300"
         }
-        response = requests.get(URL, params=params)
 
+        response = requests.get(URL, params=params)
         if not response:
             print("Ошибка выполнения запроса:")
             print("Http статус:", response.status_code, "(", response.reason, ")")
             sys.exit(1)
 
-        # Запишем полученное изображение в файл.
         self.map_file = "map.png"
         with open(self.map_file, "wb") as file:
             file.write(response.content)
 
-        ## Изображение
         self.pixmap = QPixmap(self.map_file)
         self.image.setPixmap(self.pixmap)
 
     def closeEvent(self, event):
         os.remove(self.map_file)
 
-    def mouseMoveEvent(self, event):
+    def mousePressEvent(self, event):
         self.scale_edit.setEnabled(True)
-        self.latitude_edit.setEnabled(True)
         self.longitude_edit.setEnabled(True)
+        self.latitude_edit.setEnabled(True)
 
     def keyPressEvent(self, event):
         self.scale_edit.setEnabled(False)
-        self.latitude_edit.setEnabled(False)
         self.longitude_edit.setEnabled(False)
+        self.latitude_edit.setEnabled(False)
         self.image.setFocus()
-        if event.key() == Qt.Key_PageUp and self.scale + 0.3 < 3:
+
+        if event.key() == Qt.Key_PageUp and self.scale + 0.3 < 30:
             self.scale = round(self.scale + 0.3, 4)
+            print(1, self.scale)
         if event.key() == Qt.Key_PageDown and self.scale - 0.3 > 0:
             self.scale = round(self.scale - 0.3, 4)
+            print(-1, self.scale)
+
         if event.key() == Qt.Key_Left and self.longitude - 0.3 > 0:
             self.longitude = round(self.longitude - 0.3, 6)
         if event.key() == Qt.Key_Right and self.longitude + 0.3 < 180:
             self.longitude = round(self.longitude + 0.3, 6)
-        if event.key() == Qt.Key_Up and self.latitude + 0.03 > 0:
-            self.latitude = round(self.latitude + 0.03, 6)
-        if event.key() == Qt.Key_Down and self.latitude - 0.03 < 180:
-            self.latitude = round(self.latitude - 0.03, 6)
+        if event.key() == Qt.Key_Down and self.latitude - 0.03 > 0:
+            self.latitude = round(self.latitude - 0.3, 6)
+        if event.key() == Qt.Key_Up and self.latitude + 0.03 < 180:
+            self.latitude = round(self.latitude + 0.3, 6)
+
         self.getImage()
 
 
